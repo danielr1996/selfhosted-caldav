@@ -1,0 +1,34 @@
+services:
+  caldav:
+    image: ckulka/baikal:nginx
+    container_name: baikal
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - config:/var/www/baikal/config
+      - data:/var/www/baikal/Specific
+  webcalender:
+    image: nagimov/agendav-docker:latest
+    container_name: agendav
+    restart: always
+    environment:
+      - AGENDAV_CALDAV_SERVER=http://caldav/dav.php
+      - AGENDAV_SERVER_NAME=127.0.0.1
+      - AGENDAV_ENC_KEY=my_encrypt10n_k3y
+      - AGENDAV_TIMEZONE=UTC
+      - AGENDAV_LANG=en
+      - AGENDAV_LOG_DIR=/tmp/
+    ports:
+      - 8081:80
+volumes:
+  config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.0.5,nolock,soft,rw"
+      device: ":/mnt/user/compose-data/caldav/config"
+  data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.0.5,nolock,soft,rw"
+      device: ":/mnt/user/compose-data/caldav/data"
