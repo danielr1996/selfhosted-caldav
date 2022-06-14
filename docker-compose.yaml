@@ -24,6 +24,7 @@ services:
   db:
     image: mariadb
     restart: always
+    container_name: caldav-db
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: yes
       MARIADB_DATABASE: caldav
