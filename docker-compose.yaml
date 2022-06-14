@@ -21,12 +21,27 @@ services:
       - AGENDAV_LOG_DIR=/tmp/
     ports:
       - 8081:80
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
+      MARIADB_DATABASE: caldav
+      MARIADB_USER: caldav
+      MARIADB_PASSWORD: caldav
+    volumes:
+      - db:/var/lib/mysql
 volumes:
   config:
     driver_opts:
       type: "nfs"
       o: "addr=10.0.0.5,nolock,soft,rw"
       device: ":/mnt/user/compose-data/caldav/config"
+  db:
+    driver_opts:
+      type: "nfs"
+      o: "addr=10.0.0.5,nolock,soft,rw"
+      device: ":/mnt/user/compose-data/caldav/db"
   data:
     driver_opts:
       type: "nfs"
