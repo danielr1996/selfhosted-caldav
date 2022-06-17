@@ -3,24 +3,28 @@ services:
     image: ckulka/baikal:nginx
     container_name: baikal
     restart: always
-    ports:
-      - 8080:80
     volumes:
       - config:/var/www/baikal/config
       - data:/var/www/baikal/Specific
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.caldav.rule=Host(`caldav.app.danielr1996.de`)"
+      - "traefik.http.routers.caldav.tls.certresolver=letsencrypt"
   webcalender:
     image: nagimov/agendav-docker:latest
     container_name: agendav
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calendar.rule=Host(`calendar.app.danielr1996.de`)"
+      - "traefik.http.routers.calendar.tls.certresolver=letsencrypt"
     environment:
       - AGENDAV_CALDAV_SERVER=http://caldav/dav.php
       - AGENDAV_SERVER_NAME=127.0.0.1
       - AGENDAV_ENC_KEY=my_encrypt10n_k3y
-      - AGENDAV_TIMEZONE=UTC
+      - AGENDAV_TIMEZONE=Europe/Berlin
       - AGENDAV_LANG=en
       - AGENDAV_LOG_DIR=/tmp/
-    ports:
-      - 8081:80
   db:
     image: mariadb
     restart: always
